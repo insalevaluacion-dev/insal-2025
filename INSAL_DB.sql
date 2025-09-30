@@ -1,6 +1,3 @@
--- CREATE DATABASE INSAL_DB;
--- USE INSAL_DB;
-
 CREATE TABLE IF NOT EXISTS `niveles` (
   `nivel_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) DEFAULT NULL,

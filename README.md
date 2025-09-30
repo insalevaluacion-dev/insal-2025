@@ -1,2 +1,2 @@
 # insal-evaluacion-202x
-no descripcion
+hecho con <3 para las pasantias.
