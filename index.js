@@ -1,3 +1,4 @@
+//require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
@@ -21,7 +22,7 @@ const conexion = mysql.createConnection({
   user: 'root',
   password: 'DxVaiNRIdWmfBOhQLvpyuFgDrkrfDDnl',
   database: 'railway',
-  port: '3306'
+  port: '47888'
 });
 
 conexion.connect((err) => {
