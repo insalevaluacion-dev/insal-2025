@@ -1,7 +1,7 @@
-CREATE DATABASE INSAL_DB;
-USE INSAL_DB;
+-- CREATE DATABASE INSAL_DB;
+-- USE INSAL_DB;
 
-CREATE TABLE `niveles` (
+CREATE TABLE IF NOT EXISTS `niveles` (
   `nivel_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) DEFAULT NULL,
   `descripcion` text,
@@ -11,13 +11,13 @@ insert into `niveles` (`descripcion`, `nivel_id`, `nombre`) values ('Criterios p
 insert into `niveles` (`descripcion`, `nivel_id`, `nombre`) values ('Criterios para evaluación de Expotecnia de segundos años', 3, '3');
 insert into `niveles` (`descripcion`, `nivel_id`, `nombre`) values ('Criterios de evaluación para Expotecnia de terceros años', 4, '4');
 
-CREATE TABLE `criterios` (
+CREATE TABLE IF NOT EXISTS `criterios` (
   `criterio_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) NOT NULL,
   `descripcion` varchar(255) NOT NULL,
   `porcentaje` decimal(10,0) NOT NULL,
   `nivel_id` int unsigned NOT NULL,
-  PRIMARY KEY (`criterio_id`),
+  PRIMARY KEY IF NOT EXISTS (`criterio_id`),
   KEY `criterios_niveles_FK` (`nivel_id`),
   CONSTRAINT `criterios_niveles_FK` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`nivel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -61,7 +61,7 @@ insert into `criterios` (`criterio_id`, `nivel_id`, `nombre`, `descripcion`, `po
 insert into `criterios` (`criterio_id`, `nivel_id`, `nombre`, `descripcion`, `porcentaje`) values (38, 4, 'Expresión y dominio',  'Presenta seguridad, fluidez y dominio del proyecto al explicar cada parte del contenido.', '10');
 insert into `criterios` (`criterio_id`, `nivel_id`, `nombre`, `descripcion`, `porcentaje`) values (39, 4, 'Imagen y ambientación',  'La imágen y la ambientación del stand es la apropiada para el proyecto mostrado, haciendo uso correcto de los recursos.', '10');
 
-CREATE TABLE `grados` (
+CREATE TABLE IF NOT EXISTS `grados` (
   `grado_id` int unsigned NOT NULL AUTO_INCREMENT,
   `año` varchar(5) NOT NULL,
   `nombre` varchar(60) NOT NULL,
@@ -100,14 +100,14 @@ insert into `grados` (`año`, `grado_id`, `nombre`, `seccion`) values ('3', 29, 
 insert into `grados` (`año`, `grado_id`, `nombre`, `seccion`) values ('3', 30, 'DG', 'A');
 insert into `grados` (`año`, `grado_id`, `nombre`, `seccion`) values ('3', 31, 'SE', 'A');
 
-CREATE TABLE `evaluadores` (
+CREATE TABLE IF NOT EXISTS `evaluadores` (
   `evaluador_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(65) NOT NULL,
   `email` varchar(65) NOT NULL,
   PRIMARY KEY (`evaluador_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `proyectos` (
+CREATE TABLE IF NOT EXISTS `proyectos` (
   `proyecto_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(150) NOT NULL,
   `grado_id` int unsigned NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE `proyectos` (
   CONSTRAINT `proyectos_niveles_FK` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`nivel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `estudiantes` (
+CREATE TABLE IF NOT EXISTS `estudiantes` (
   `estudiante_id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(125) NOT NULL,
   `proyecto_id` int unsigned NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE `estudiantes` (
   CONSTRAINT `estudiantes_proyectos_FK` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`proyecto_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `evaluaciones` (
+CREATE TABLE IF NOT EXISTS `evaluaciones` (
   `evaluacion_id` int unsigned NOT NULL AUTO_INCREMENT,
   `evaluador_id` int unsigned NOT NULL,
   `proyecto_id` int unsigned NOT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE `evaluaciones` (
   CONSTRAINT `evaluaciones_proyectos_FK` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`proyecto_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `evaluacion_criterios` (
+CREATE TABLE IF NOT EXISTS `evaluacion_criterios` (
   `id_evaluacion_criterio` int NOT NULL AUTO_INCREMENT,
   `criterio_id` int unsigned NOT NULL,
   `evaluacion_id` int unsigned DEFAULT NULL,
