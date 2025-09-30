@@ -1,4 +1,4 @@
-//require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
@@ -17,14 +17,14 @@ app.use(session({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-const conexion = mysql.createConnection({
-  host: 'shinkansen.proxy.rlwy.net',
-  user: 'root',
-  password: 'DxVaiNRIdWmfBOhQLvpyuFgDrkrfDDnl',
-  database: 'railway',
-  port: '47888'
-});
 
+const conexion = mysql.createConnection({
+  host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE || 'railway',
+  port: parseInt(process.env.MYSQL_PORT || '47888')
+});
 conexion.connect((err) => {
   if (err) {
     console.error('No se pudo conectar por esta razón: ', err);
@@ -453,6 +453,7 @@ app.get('/proyecto/:id', (req, res) => {
 //    console.log('Servidor corriendo en http://localhost:3000');
 //});
 
-app.listen(3000, '0.0.0.0', () => {
-  console.log('Servidor en http://0.0.0.0:3000');
-});   
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`servidor corriendo en puerto ${PORT}`);
+});
