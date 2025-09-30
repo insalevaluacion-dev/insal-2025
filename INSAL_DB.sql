@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `criterios` (
   `descripcion` varchar(255) NOT NULL,
   `porcentaje` decimal(10,0) NOT NULL,
   `nivel_id` int unsigned NOT NULL,
-  PRIMARY KEY IF NOT EXISTS (`criterio_id`),
+  PRIMARY KEY  (`criterio_id`),
   KEY `criterios_niveles_FK` (`nivel_id`),
   CONSTRAINT `criterios_niveles_FK` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`nivel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
