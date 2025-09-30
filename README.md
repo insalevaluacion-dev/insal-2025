@@ -1,2 +1,2 @@
 # insal-evaluacion-202x
-hecho con <3 para las pasantias.
+hecho con <3 para las horas practicas
