@@ -12,7 +12,11 @@
   "description": "Aplicacion web para evaluacion de proyectos de expotecnia y expo de logros del Instituto Nacional San Luis",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "author": "2 Desarrollo de Software",
   "license": "ISC"
