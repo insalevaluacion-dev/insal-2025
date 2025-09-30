@@ -18,21 +18,26 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 
-const conexion = mysql.createConnection({
+const conexion = mysql.createPool({
   host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
   user: process.env.MYSQL_USER || 'root',
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE || 'railway',
-  port: parseInt(process.env.MYSQL_PORT || '47888')
+  port: parseInt(process.env.MYSQL_PORT || '47888'),
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
-conexion.connect((err) => {
+conexion.getConnection((err, connection) => {
   if (err) {
     console.error('No se pudo conectar por esta razón: ', err);
     return;
   }
   console.log('Conexión exitosa');
+  connection.release();
 });
-
 app.get('/', (req, res) => {
   res.render('index');
 });
