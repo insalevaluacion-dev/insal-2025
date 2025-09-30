@@ -17,7 +17,6 @@ app.use(session({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-
 const conexion = mysql.createPool({
   host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
   user: process.env.MYSQL_USER || 'root',
@@ -26,18 +25,38 @@ const conexion = mysql.createPool({
   port: parseInt(process.env.MYSQL_PORT || '47888'),
   waitForConnections: true,
   connectionLimit: 10,
+  maxIdle: 10,
+  idleTimeout: 60000,
   queueLimit: 0,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 10000
 });
 conexion.getConnection((err, connection) => {
   if (err) {
-    console.error('No se pudo conectar por esta razón: ', err);
-    return;
+    console.error('Error inicial de conexión:', err.message);
+  } else {
+    console.log('Conexión exitosa a MySQL');
+    connection.release();
   }
-  console.log('Conexión exitosa');
-  connection.release();
 });
+setInterval(() => {
+  conexion.query('SELECT 1', (err) => {
+    if (err) {
+      console.error('Error en keepalive ping:', err.message);
+    }
+  });
+}, 30000);
+
+// endpoint de health para ver si la conexion se apaga
+app.get('/health', (req, res) => {
+  conexion.query('SELECT 1', (err) => {
+    if (err) {
+      return res.status(503).json({ status: 'unhealthy', error: err.message });
+    }
+    res.json({ status: 'healthy' });
+  });
+});
+
 app.get('/', (req, res) => {
   res.render('index');
 });
