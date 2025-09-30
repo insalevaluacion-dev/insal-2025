@@ -1,0 +1,115 @@
+.principal__container{
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    width: 100dvw;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    opacity: 0;
+    filter: blur(10px);
+    animation: revealPage 800ms ease-out forwards;
+}
+
+.principal__element{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.element--maintext{
+    color: var(--text-color-secondary);
+    font-size: 2.5rem;
+    font-weight: 500;
+}
+
+.principal__element--2{
+    width: 100dvw;
+    max-width: 400px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.form{
+    gap: 6px;
+}
+
+.form, .input_text-field{
+    width: 100%;
+}
+
+.indexbutton{
+    width: fit-content;
+    text-decoration: none;
+    font-size: 2.1rem !important;
+}
+
+.SanLuis_logo{
+    width: 250px;
+    max-width: 360px;
+}
+
+.logo{
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+@keyframes revealPage {
+    0% {
+        opacity: 0;
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+/* elementos que aparezcan progresivamente */
+.fade-in-element {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 800ms ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (width >= 800px) {
+    .principal__container{
+        flex-direction: row;
+        gap: 48px;
+        padding: 32px;
+    }
+
+    .principal__element {
+        flex: 1;
+    }
+
+    .principal__element--2 {
+        max-width: 500px;
+    }
+
+    .element--maintext {
+        font-size: 3.5rem;
+        margin-bottom: 24px;
+    }
+
+    .SanLuis_logo {
+        width: 320px;
+    }
+
+    .form {
+        gap: 16px;
+    }
+}

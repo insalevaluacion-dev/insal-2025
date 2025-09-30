@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Evaluación</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/resumen.css">
+    <script type="module">
+        import 'https://esm.run/@material/web/all.js'
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="/js/app.js" defer></script>
+
+</head>
+<body>
+    <main class="main_document">
+        <h3>Resumen de Evaluación</h3>
+        <div id="resumen-criterios">
+            <ul id="lista-criterios"></ul>
+        </div>
+        <button type="button" class="btn centrar calificar" onclick="mostrarNotaFinal()">
+            Calificar
+            <span class="material-symbols-outlined">
+                stylus_note
+            </span>
+        </button>
+    
+        <div id="modal-nota-final" class="modal">
+            <div class="modal-content">
+                <h2>Nota Final</h2>
+                <p id="nota-final"></p>
+                <button type="button" class="btn centrar calificar" onclick="confirmarEvaluacion()">
+                    <span class="material-symbols-outlined">
+                        check_circle
+                    </span>
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/resumen.js" defer></script>
+</body>
+</html>

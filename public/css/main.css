@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/*
+:root {
+    --font-color: #1C2024;
+    --font-color-secundary: #0F1418;
+    --color-primary: #89ceff;
+    --text-color: rgb(255, 255, 255);
+    --text-color-secundary: #DFE3E8;
+    --text-color-prioritary: #49ADFF;
+}
+*/
+
+:root {
+    --font-color: #F0EFF4;
+    --font-color-secondary: #ffffff;
+    --font-color-important: #C3E8FF;
+    --font-color-tercero: #d6efff;
+    --text-color: #47464b;
+    --text-color-secondary: #000000;
+    --text-color-prioritary: #04648C;
+    --hover-color: #b2b6b9;
+    --principal-color: #03a2e6;
+
+    /* System tokens */
+    --md-sys-color-primary: #03a2e6;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-on-surface-variant: #3f4948;
+
+    /* Component tokens */
+    --md-checkbox-container-shape: 0px;
+}
+
+
+/* Nueva paleta naranja basada en Material Design 
+:root {
+    --font-color: #FFE0B2;
+    --font-color-secundary: #ffffff; 
+    --font-color-important: #FFB74D;
+    --text-color: #424242;           
+    --text-color-secundary: #212121;  
+    --text-color-prioritary: #F57C00;
+    --hover-color: #FFA726;          
+}
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: var(--text-color);
+    font-family: "Poppins", sans-serif;
+    background: var(--font-color);
+    display: flex;
+    height: 100dvh;
+    width: 100dvw;
+    font-size: 1.35rem;
+    overflow: hidden;
+    scrollbar-color: var(--principal-color) var(--font-color);
+    svg{
+        fill: rgb(0, 0, 0);
+    }
+}
+
+.btn{
+    border-radius: 25px;
+    color: var(--text-color-prioritary);
+    background: var(--font-color-important);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: Poppins, sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    gap: 5px;
+}
+
+.fontblur{
+    position: absolute;
+    box-shadow: 0 0 100px 60px var(--principal-color);
+    z-index: -100;
+}
+
+.centrar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Evaluador</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="shortcut icon" href="/img/SanLuis.jpg" type="image/x-icon">
+    <script type="module">
+        import 'https://esm.run/@material/web/all.js'
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+</head>
+<body>
+    <section class="principal__container">
+        <div class="principal__element">
+            <div>
+                <span class="fontblur"></span>
+            </div>
+            <p class="element--maintext">¡Bienvenido/a!</p>
+            <div class="centrar SanLuis_logo">
+                <img src="/img/SanLuis.jpg" class="logo" alt="Logo del San Luis">
+            </div>
+        </div>
+        <div class="principal__element--2 centrar">
+            <form class="principal__element form" id="formulario-evaluador" action="/enviarEvaluador" method="POST">
+                <label for="nombreEvaluador">Nombre:</label>
+                <md-outlined-text-field id="nombreEvaluador" name="nombreEvaluador" type="text" label="Nombre del evaluador"
+                    required inputmode="text" class="input_text-field"
+                    supporting-text="Ingresa tu nombre completo"></md-outlined-text-field>
+                <label for="email">Email:</label>
+                <md-outlined-text-field id="email" name="email" type="text" label="Correo electronico" required
+                    inputmode="email" class="input_text-field" supporting-text="Ingresa un correo"></md-outlined-text-field>
+                <button type="submit" class="btn indexbutton centrar">
+                    Continuar
+                    <span class="material-symbols-outlined indexbutton">
+                        arrow_right_alt
+                    </span>
+                </button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

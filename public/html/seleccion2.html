@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Proyecto</title>
+    <link rel="stylesheet" href="/css/seleccion2.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/selector.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="shortcut icon" href="/img/SanLuis.jpg" type="image/x-icon">
+</head>
+<body>
+    <section class="content">
+        <main class="principal">
+            <form id="formulario-filtros" class="form">
+                <p class="principal__elemnet--text">Busque el proyecto a evaluar:</p>
+                <label for="evento">Evento:</label>
+                <select id="evento" required>
+                    <option value="" hidden>Seleccione un evento</option>
+                    <option value="1|Expo de Logros">Expo de Logros</option>
+                    <option value="2|1|Expotecnia - Primer año">Expotecnia - Primer año</option>
+                    <option value="3|2|Expotecnia - Segundo año">Expotecnia - Segundo año</option>
+                    <option value="4|3|Expotecnia - Tercer año">Expotecnia - Tercer año</option>
+                </select>
+                <label for="año" id="label-año" style="display: none;">Año:</label>
+                <select id="año" required style="display: none;">
+                    <option value="" hidden>Seleccione un año</option>
+                </select>
+                <label for="nombre">Grado:</label>
+                <select id="nombre" required disabled>
+                    <option value="" hidden>Seleccione un grado</option>
+                </select>
+                <label for="seccion">Sección:</label>
+                <select id="seccion" required disabled>
+                    <option value="" hidden>Seleccione una sección</option>
+                </select>
+                <button type="button" id="buscar-proyectos" class="btn centrar" disabled>
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                    Buscar proyectos
+                </button>
+            </form>
+        </main>
+
+        <div id="modal-proyectos" style="display: none;" class="modal">
+            <div class="modal-content">
+                <div id="contenedor-proyectos"></div>
+                <button onclick="cerrarModalProyectos()" class="btn centrar">
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/seleccion2.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mysql2": "^3.14.4"
+  },
+  "name": "app-instituto",
+  "version": "1.0.0",
+  "description": "Aplicacion web para evaluacion de proyectos de expotecnia y expo de logros del Instituto Nacional San Luis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "2 Desarrollo de Software",
+  "license": "ISC"
+}

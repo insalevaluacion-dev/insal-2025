@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Evaluación</title>
+    <link rel="stylesheet" href="/css/formulario.css">
+    <link rel="stylesheet" href="/css/formulario2.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script type="module">
+        import 'https://esm.run/@material/web/all.js'
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="/js/app.js" defer></script>
+</head>
+<body>    
+    <main class="main_document">
+        <section class="container1">
+            <p id="nombre-proyecto">Nombre del proyecto: <span><md-circular-progress indeterminate></md-circular-progress>Cargando...</span></p>
+        </section>
+        <section class="container2">
+            <form id="formulario-evaluacion">
+                <button type="button" class="btn centrar" onclick="limpiarSeleccion()">
+                    <span class="material-symbols-outlined">
+                        arrow_back
+                    </span>
+                    Regresar la a seleccion de proyecto
+                </button>
+                <div class="instrucciones">
+                    <p><span>Objetivo: </span>Que los estudiantes expresen a través de la explicación, conceptualización, demostración y aplicación en su formación para la vida, las competencias adquiridas en las dimensiones académicas, humanas, sociales y emprendedoras; alcanzadas durante el año lectivo.</p>
+                </div>
+            </form>
+        </section>
+    </main>
+    <div id="modal-asistencia" class="modal">
+        <div class="modal-content">
+            <h2>Asistencia</h2>
+            <p>Selecciona solo a los alumnos presentes.</p>
+            <form id="formulario-asistencia">
+                <ul id="lista-estudiantes"></ul>
+                <button type="button" class="btn centrar" onclick="guardarAsistencia()">
+                    <span class="material-symbols-outlined">
+                        save
+                    </span>
+                    Guardar asistencia
+                </button>
+                <button type="button" class="btn centrar" onclick="cerrarModalAsistencia()">
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+                    Cerrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/formulario.js" defer></script>
+</body>
+</html>
