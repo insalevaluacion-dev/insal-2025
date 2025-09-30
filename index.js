@@ -17,10 +17,10 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 const conexion = mysql.createConnection({
-  host: 'mysql.railway.internal',
+  host: 'shinkansen.proxy.rlwy.net',
   user: 'root',
   password: 'DxVaiNRIdWmfBOhQLvpyuFgDrkrfDDnl',
-  database: 'INSAL_DB',
+  database: 'railway',
   port: '3306'
 });
 
