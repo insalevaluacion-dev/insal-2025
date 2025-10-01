@@ -16,14 +16,19 @@ app.use(session({
 }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-const conexion = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
+const conexion = mysql.createPool({
+  host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
+  user: process.env.MYSQL_USER || 'root',
   password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  port: parseInt(process.env.MYSQL_PORT || '3306'),
+  database: process.env.MYSQL_DATABASE || 'railway',
+  port: parseInt(process.env.MYSQL_PORT || '47888'),
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 10,
+  maxIdle: 10,
+  idleTimeout: 60000,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000
 });
 //const conexion = mysql.createPool({
 //  host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
