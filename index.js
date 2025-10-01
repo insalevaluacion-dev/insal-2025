@@ -16,21 +16,29 @@ app.use(session({
 }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 const conexion = mysql.createPool({
-  host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE || 'railway',
-  port: parseInt(process.env.MYSQL_PORT || '47888'),
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  port: parseInt(process.env.MYSQL_PORT || '3306'),
   waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10,
-  idleTimeout: 60000,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000
+  connectionLimit: 10
 });
+//const conexion = mysql.createPool({
+//  host: process.env.MYSQL_HOST || 'shinkansen.proxy.rlwy.net',
+//  user: process.env.MYSQL_USER || 'root',
+//  password: process.env.MYSQL_PASSWORD,
+//  database: process.env.MYSQL_DATABASE || 'railway',
+//  port: parseInt(process.env.MYSQL_PORT || '47888'),
+//  waitForConnections: true,
+//  connectionLimit: 10,
+//  maxIdle: 10,
+//  idleTimeout: 60000,
+//  queueLimit: 0,
+//  enableKeepAlive: true,
+//  keepAliveInitialDelay: 10000
+//});
 conexion.getConnection((err, connection) => {
   if (err) {
     console.error('Error inicial de conexión:', err.message);
@@ -47,7 +55,7 @@ setInterval(() => {
   });
 }, 30000);
 
-// endpoint de health para ver si la conexion se apaga
+// Health check endpoint
 app.get('/health', (req, res) => {
   conexion.query('SELECT 1', (err) => {
     if (err) {
