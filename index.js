@@ -314,7 +314,7 @@ app.post('/guardar-asistencia', (req, res) => {
   const proyectoId = req.session.idProyecto;
 
   if (!proyectoId || !estudianteIds || !Array.isArray(estudianteIds)) {
-    return res.status(400).json({ mensaje: 'Datos incompletos' });
+    return res.status(400).json({ mensaje: 'Datos incompletos en la asistencia' });
   }
 
   if (estudianteIds.length === 0) {
@@ -344,7 +344,11 @@ app.post('/guardar-evaluacion', (req, res) => {
   const proyectoId = req.session.idProyecto;
 
   if (!evaluadorId || !proyectoId || !evaluaciones || !Array.isArray(evaluaciones)) {
-    return res.status(400).json({ mensaje: 'Datos incompletos' });
+    console.log(evaluadorId);
+    console.log(proyectoId);
+    console.log(evaluaciones);
+
+    return res.status(400).json({ mensaje: 'Datos incompletos en la evaluacion' });
   }
 
   const queryCriterios = 'SELECT criterio_id, porcentaje FROM criterios WHERE criterio_id IN (?)';
