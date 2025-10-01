@@ -44,14 +44,14 @@ const conexion = mysql.createPool({
 //  enableKeepAlive: true,
 //  keepAliveInitialDelay: 10000
 //});
-conexion.getConnection((err, connection) => {
-  if (err) {
-    console.error('Error inicial de conexión:', err.message);
-  } else {
-    console.log('Conexión exitosa a MySQL');
-    connection.release();
-  }
-});
+//conexion.getConnection((err, connection) => {
+//  if (err) {
+//    console.error('Error inicial de conexión:', err.message);
+//  } else {
+//    console.log('Conexión exitosa a MySQL');
+//    connection.release();
+//  }
+//});
 setInterval(() => {
   conexion.query('SELECT 1', (err) => {
     if (err) {
