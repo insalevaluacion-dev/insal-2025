@@ -347,7 +347,7 @@ app.post('/guardar-evaluacion', (req, res) => {
     console.log(evaluadorId);
     console.log(proyectoId);
     console.log(evaluaciones);
-    console.log(!Array.isArray(evaluaciones));
+    console.log(Array.isArray(evaluaciones));
 
     return res.status(400).json({ mensaje: 'Datos incompletos en la evaluacion' });
   }
