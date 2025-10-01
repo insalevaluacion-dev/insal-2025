@@ -16,7 +16,7 @@ app.use(session({
 }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-const conexion = mysql.createPool({
+const conexion = mysql.createConnection({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
