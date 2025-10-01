@@ -113,7 +113,6 @@ app.post('/guardar-nivel', (req, res) => {
 
 app.get('/obtener-nivel', (req, res) => {
   if (!req.session.numNivel) {
-    console.log(numNivel);
     return res.status(400).json({ mensaje: 'No se ha seleccionado un nivel' });
   }
   res.json({
