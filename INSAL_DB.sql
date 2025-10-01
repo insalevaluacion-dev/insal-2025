@@ -117,6 +117,8 @@ CREATE TABLE IF NOT EXISTS `proyectos` (
   CONSTRAINT `proyectos_grados_FK` FOREIGN KEY (`grado_id`) REFERENCES `grados` (`grado_id`),
   CONSTRAINT `proyectos_niveles_FK` FOREIGN KEY (`nivel_id`) REFERENCES `niveles` (`nivel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+insert into `proyectos` (`nombre`, `grado_id`, `nivel` ) values ('Criterios para evaluación de Expotecnia para primeros años', 2, '2');
+
 
 CREATE TABLE IF NOT EXISTS `estudiantes` (
   `estudiante_id` int unsigned NOT NULL AUTO_INCREMENT,
