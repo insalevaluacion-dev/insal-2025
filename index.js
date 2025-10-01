@@ -347,13 +347,23 @@ app.post('/guardar-evaluacion', async (req, res) => {
     return res.status(400).json({ mensaje: 'Datos incompletos en la evaluacion' });
   }
 
-  const queryCriterios = 'SELECT criterio_id, porcentaje FROM criterios WHERE criterio_id IN (?)';
   const criterioIds = evaluaciones.map(e => e.criterio_id);
 
+  // Obtener una conexión del pool
+  let connection;
+
   try {
+    connection = await new Promise((resolve, reject) => {
+      conexion.getConnection((err, conn) => {
+        if (err) reject(err);
+        else resolve(conn);
+      });
+    });
+
     // Obtener criterios
+    const queryCriterios = 'SELECT criterio_id, porcentaje FROM criterios WHERE criterio_id IN (?)';
     const criteriosResults = await new Promise((resolve, reject) => {
-      conexion.query(queryCriterios, [criterioIds], (err, results) => {
+      connection.query(queryCriterios, [criterioIds], (err, results) => {
         if (err) reject(err);
         else resolve(results);
       });
@@ -372,13 +382,13 @@ app.post('/guardar-evaluacion', async (req, res) => {
 
     // Iniciar transacción
     await new Promise((resolve, reject) => {
-      conexion.beginTransaction(err => err ? reject(err) : resolve());
+      connection.beginTransaction(err => err ? reject(err) : resolve());
     });
 
     // Insertar evaluación principal
     const queryEvaluacion = 'INSERT INTO evaluaciones (evaluador_id, proyecto_id, fecha_evaluacion, nota_evaluacion) VALUES (?, ?, NOW(), ?)';
     const resultEvaluacion = await new Promise((resolve, reject) => {
-      conexion.query(queryEvaluacion, [evaluadorId, proyectoId, totalPuntuacion], (err, result) => {
+      connection.query(queryEvaluacion, [evaluadorId, proyectoId, totalPuntuacion], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -387,12 +397,12 @@ app.post('/guardar-evaluacion', async (req, res) => {
     const evaluacionId = resultEvaluacion.insertId;
     req.session.evaluacionId = evaluacionId;
 
-    // Insertar criterios (secuencialmente o con Promise.all)
+    // Insertar criterios
     const queryCriteriosInsert = 'INSERT INTO evaluacion_criterios (criterio_id, puntuacion, evaluacion_id) VALUES (?, ?, ?)';
     await Promise.all(
       evaluaciones.map(({ criterio_id, puntuacion }) =>
         new Promise((resolve, reject) => {
-          conexion.query(queryCriteriosInsert, [criterio_id, puntuacion, evaluacionId], (err) => {
+          connection.query(queryCriteriosInsert, [criterio_id, puntuacion, evaluacionId], (err) => {
             if (err) reject(err);
             else resolve();
           });
@@ -403,7 +413,7 @@ app.post('/guardar-evaluacion', async (req, res) => {
     // Verificar si hay 3 o más evaluaciones
     const queryCount = 'SELECT COUNT(*) as count, AVG(nota_evaluacion) as promedio FROM evaluaciones WHERE proyecto_id = ?';
     const countResult = await new Promise((resolve, reject) => {
-      conexion.query(queryCount, [proyectoId], (err, results) => {
+      connection.query(queryCount, [proyectoId], (err, results) => {
         if (err) reject(err);
         else resolve(results[0]);
       });
@@ -413,7 +423,7 @@ app.post('/guardar-evaluacion', async (req, res) => {
     if (countResult.count >= 3) {
       const queryUpdate = 'UPDATE proyectos SET nota = ? WHERE proyecto_id = ?';
       await new Promise((resolve, reject) => {
-        conexion.query(queryUpdate, [countResult.promedio, proyectoId], (err) => {
+        connection.query(queryUpdate, [countResult.promedio, proyectoId], (err) => {
           if (err) reject(err);
           else resolve();
         });
@@ -422,8 +432,11 @@ app.post('/guardar-evaluacion', async (req, res) => {
 
     // Commit
     await new Promise((resolve, reject) => {
-      conexion.commit(err => err ? reject(err) : resolve());
+      connection.commit(err => err ? reject(err) : resolve());
     });
+
+    // Liberar la conexión al pool
+    connection.release();
 
     res.status(200).json({
       mensaje: 'Evaluación guardada correctamente',
@@ -431,35 +444,26 @@ app.post('/guardar-evaluacion', async (req, res) => {
     });
 
   } catch (error) {
-    // Rollback en caso de error
-    await new Promise(resolve => {
-      conexion.rollback(() => resolve());
-    });
-
     console.error('Error en guardar-evaluacion:', error);
+
+    // Rollback si hay una conexión activa
+    if (connection) {
+      try {
+        await new Promise((resolve) => {
+          connection.rollback(() => {
+            connection.release();
+            resolve();
+          });
+        });
+      } catch (rollbackError) {
+        console.error('Error en rollback:', rollbackError);
+        connection.release();
+      }
+    }
+
     res.status(500).json({ mensaje: 'Error al guardar la evaluación' });
   }
 });
-app.get('/evaluacion-criterios/:evaluacionId', (req, res) => {
-  const evaluacionId = Number(req.params.evaluacionId);
-  if (!evaluacionId) {
-    return res.status(400).json({ mensaje: 'evaluacionId no válido' });
-  }
-
-  const query = `
-        SELECT ec.criterio_id, c.nombre, c.descripcion, ec.puntuacion, c.porcentaje
-        FROM evaluacion_criterios ec
-        JOIN criterios c ON ec.criterio_id = c.criterio_id
-        WHERE ec.evaluacion_id = ?
-    `;
-  conexion.query(query, [evaluacionId], (err, results) => {
-    if (err) {
-      return res.status(500).json({ mensaje: 'Error al obtener los criterios evaluados' });
-    }
-    res.json({ criterios: results });
-  });
-});
-
 app.get('/html/resumen.html', (req, res) => {
   if (!req.session.datosEvaluador || !req.session.evaluacionId) {
     return res.redirect('/html/seleccion2.html');
