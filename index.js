@@ -338,28 +338,28 @@ app.post('/guardar-asistencia', (req, res) => {
   });
 });
 
-app.post('/guardar-evaluacion', (req, res) => {
+app.post('/guardar-evaluacion', async (req, res) => {
   const { evaluaciones } = req.body;
   const evaluadorId = req.session.datosEvaluador?.id;
   const proyectoId = req.session.idProyecto;
 
   if (!evaluadorId || !proyectoId || !evaluaciones || !Array.isArray(evaluaciones)) {
-    console.log(evaluadorId);
-    console.log(proyectoId);
-    console.log(evaluaciones);
-    console.log(Array.isArray(evaluaciones));
-
     return res.status(400).json({ mensaje: 'Datos incompletos en la evaluacion' });
   }
 
   const queryCriterios = 'SELECT criterio_id, porcentaje FROM criterios WHERE criterio_id IN (?)';
   const criterioIds = evaluaciones.map(e => e.criterio_id);
 
-  conexion.query(queryCriterios, [criterioIds], (err, criteriosResults) => {
-    if (err) {
-      return res.status(500).json({ mensaje: 'Error al obtener criterios' });
-    }
+  try {
+    // Obtener criterios
+    const criteriosResults = await new Promise((resolve, reject) => {
+      conexion.query(queryCriterios, [criterioIds], (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
 
+    // Calcular puntuación total
     let totalPuntuacion = 0;
     evaluaciones.forEach(evaluacion => {
       const criterio = criteriosResults.find(c => c.criterio_id === evaluacion.criterio_id);
@@ -368,83 +368,78 @@ app.post('/guardar-evaluacion', (req, res) => {
       }
     });
 
-    totalPuntuacion = totalPuntuacion > 10 ? 10 : totalPuntuacion;
+    totalPuntuacion = Math.min(totalPuntuacion, 10);
 
-    conexion.beginTransaction(err => {
-      if (err) {
-        return res.status(500).json({ mensaje: 'Error al iniciar transacción' });
-      }
+    // Iniciar transacción
+    await new Promise((resolve, reject) => {
+      conexion.beginTransaction(err => err ? reject(err) : resolve());
+    });
 
-      const queryEvaluacion = 'INSERT INTO evaluaciones (evaluador_id, proyecto_id, fecha_evaluacion, nota_evaluacion) VALUES (?, ?, NOW(), ?)';
+    // Insertar evaluación principal
+    const queryEvaluacion = 'INSERT INTO evaluaciones (evaluador_id, proyecto_id, fecha_evaluacion, nota_evaluacion) VALUES (?, ?, NOW(), ?)';
+    const resultEvaluacion = await new Promise((resolve, reject) => {
       conexion.query(queryEvaluacion, [evaluadorId, proyectoId, totalPuntuacion], (err, result) => {
-        if (err) {
-          return conexion.rollback(() => {
-            return res.status(500).json({ mensaje: 'Error al guardar en evaluaciones' });
-          });
-        }
-
-        const evaluacionId = result.insertId;
-        req.session.evaluacionId = evaluacionId;
-
-        const queryCriterios = 'INSERT INTO evaluacion_criterios (criterio_id, puntuacion, evaluacion_id) VALUES (?, ?, ?)';
-        let completedQueries = 0;
-        const totalQueries = evaluaciones.length;
-
-        evaluaciones.forEach(({ criterio_id, puntuacion }) => {
-          conexion.query(queryCriterios, [criterio_id, puntuacion, evaluacionId], (err) => {
-            if (err) {
-              return conexion.rollback(() => {
-                return res.status(500).json({ mensaje: 'Error al guardar evaluación criterio' });
-              });
-            }
-            completedQueries++;
-            if (completedQueries === totalQueries) {
-              const queryCount = 'SELECT COUNT(*) as count, AVG(nota_evaluacion) as promedio FROM evaluaciones WHERE proyecto_id = ?';
-              conexion.query(queryCount, [proyectoId], (err, results) => {
-                if (err) {
-                  return conexion.rollback(() => {
-                    return res.status(500).json({ mensaje: 'Error al contar evaluaciones' });
-                  });
-                }
-
-                const count = results[0].count;
-                if (count >= 3) {
-                  const promedio = results[0].promedio;
-                  const queryUpdate = 'UPDATE proyectos SET nota = ? WHERE proyecto_id = ?';
-                  conexion.query(queryUpdate, [promedio, proyectoId], (err) => {
-                    if (err) {
-                      return conexion.rollback(() => {
-                        return res.status(500).json({ mensaje: 'Error al actualizar nota del proyecto' });
-                      });
-                    }
-                    conexion.commit(err => {
-                      if (err) {
-                        return conexion.rollback(() => {
-                          return res.status(500).json({ mensaje: 'Error al confirmar transacción' });
-                        });
-                      }
-                      res.status(200).json({ mensaje: 'Evaluación guardada correctamente', redirect: '/html/resumen.html' });
-                    });
-                  });
-                } else {
-                  conexion.commit(err => {
-                    if (err) {
-                      return conexion.rollback(() => {
-                        return res.status(500).json({ mensaje: 'Error al confirmar transacción' });
-                      });
-                    }
-                    res.status(200).json({ mensaje: 'Evaluación guardada correctamente', redirect: '/html/resumen.html' });
-                  });
-                }
-              });
-            }
-          });
-        });
+        if (err) reject(err);
+        else resolve(result);
       });
     });
-  });
-});
 
+    const evaluacionId = resultEvaluacion.insertId;
+    req.session.evaluacionId = evaluacionId;
+
+    // Insertar criterios (secuencialmente o con Promise.all)
+    const queryCriteriosInsert = 'INSERT INTO evaluacion_criterios (criterio_id, puntuacion, evaluacion_id) VALUES (?, ?, ?)';
+    await Promise.all(
+      evaluaciones.map(({ criterio_id, puntuacion }) =>
+        new Promise((resolve, reject) => {
+          conexion.query(queryCriteriosInsert, [criterio_id, puntuacion, evaluacionId], (err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        })
+      )
+    );
+
+    // Verificar si hay 3 o más evaluaciones
+    const queryCount = 'SELECT COUNT(*) as count, AVG(nota_evaluacion) as promedio FROM evaluaciones WHERE proyecto_id = ?';
+    const countResult = await new Promise((resolve, reject) => {
+      conexion.query(queryCount, [proyectoId], (err, results) => {
+        if (err) reject(err);
+        else resolve(results[0]);
+      });
+    });
+
+    // Actualizar nota del proyecto si corresponde
+    if (countResult.count >= 3) {
+      const queryUpdate = 'UPDATE proyectos SET nota = ? WHERE proyecto_id = ?';
+      await new Promise((resolve, reject) => {
+        conexion.query(queryUpdate, [countResult.promedio, proyectoId], (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+    }
+
+    // Commit
+    await new Promise((resolve, reject) => {
+      conexion.commit(err => err ? reject(err) : resolve());
+    });
+
+    res.status(200).json({
+      mensaje: 'Evaluación guardada correctamente',
+      redirect: '/html/resumen.html'
+    });
+
+  } catch (error) {
+    // Rollback en caso de error
+    await new Promise(resolve => {
+      conexion.rollback(() => resolve());
+    });
+
+    console.error('Error en guardar-evaluacion:', error);
+    res.status(500).json({ mensaje: 'Error al guardar la evaluación' });
+  }
+});
 app.get('/evaluacion-criterios/:evaluacionId', (req, res) => {
   const evaluacionId = Number(req.params.evaluacionId);
   if (!evaluacionId) {
